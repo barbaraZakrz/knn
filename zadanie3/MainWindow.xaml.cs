@@ -60,6 +60,37 @@ namespace zadanie3
             return allData;
         }
 
+        public static List<Obiekt> normalizacja(List<Obiekt> lista)
+        {
+            List<double> min = new List<double>(lista[0].parametry);
+            List<double> max = new List<double>(lista[0].parametry);
+
+            for (int i=1; i<lista.Count; i++)
+            {
+                for (int j=0; j<min.Count; j++)
+                {
+                    if (lista[i].parametry[j] < min[j])
+                    {
+                        min[j] = lista[i].parametry[j];
+                    }
+                    if (lista[i].parametry[j] > max[j])
+                    {
+                        max[j] = lista[i].parametry[j];
+                    }
+                }
+            }
+
+            for (int i = 0; i < lista.Count; i++)
+            {
+                for (int j = 0; j < min.Count; j++)
+                {
+                    lista[i].parametry[j] = (lista[i].parametry[j] - min[j]) / (max[j] - min[j]);
+                }
+            }
+
+            return lista; 
+        }
+
         public static double euklides(Obiekt obiekt1, Obiekt obiekt2)
         {
             double suma = 0;
@@ -70,10 +101,28 @@ namespace zadanie3
             return Math.Sqrt(suma);
         }
 
-        public static int ListCount(List<Obiekt> list)
+        public static int knn(List<Obiekt> lista, Obiekt obiekt, int k)
         {
-            int listCount = list.Count;
-            return listCount;
+            List<Obiekt> posortowane = new List<Obiekt>();
+            posortowane[0] = lista[0];
+            for (int i =1; i<lista.Count; i++)
+            {
+                bool flag = false;
+                for (int j = 0; j<posortowane.Count; j++)
+                {
+                    if (euklides(obiekt, lista[i]) < euklides(obiekt, posortowane[j]))
+                    {
+                        posortowane.Insert(j, lista[i]);
+                        flag = true;
+                        break;
+                    }
+                }
+                if (flag == false)
+                { 
+                    posortowane.Add(lista[i]);
+                }
+            }
+
         }
 
         public static string toText(List<Obiekt> list)
@@ -83,7 +132,7 @@ namespace zadanie3
             {
                 for (int j=0; j < list[i].parametry.Count; j++)
                 {
-                    text += list[i].parametry[j].ToString();
+                    text += list[i].parametry[j].ToString("0.##");
                     text += " ";
 
                 }
@@ -108,7 +157,7 @@ namespace zadanie3
         {
             List<Obiekt> allData = new List<Obiekt>();
             allData = importData("iris.txt");
-            ListCount(allData);
+            allData = normalizacja(allData);
             Debug.Text = toText(allData);
         }
     }
