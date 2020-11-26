@@ -104,7 +104,7 @@ namespace zadanie3
         public static int knn(List<Obiekt> lista, Obiekt obiekt, int k)
         {
             List<Obiekt> posortowane = new List<Obiekt>();
-            posortowane[0] = lista[0];
+            posortowane.Add(lista[0]);
             for (int i =1; i<lista.Count; i++)
             {
                 bool flag = false;
@@ -122,7 +122,35 @@ namespace zadanie3
                     posortowane.Add(lista[i]);
                 }
             }
+            Dictionary<int, int> klasyDec = new Dictionary<int, int>();
+            for (int i = 0; i < k; i++)
+            {
+                if (klasyDec.ContainsKey(posortowane[i].klasa))
+                {
+                    klasyDec[posortowane[i].klasa]++;
+                }
+                else
+                {
+                    klasyDec.Add(posortowane[i].klasa, 1);
+                }
+            }
+            int klasa = klasyDec.Aggregate((x, y) => x.Value < y.Value ? x : y).Key; //znalezione na stackoverflow, wyszukuje klucz o najmniejszej wartości 
+            return klasa;
 
+
+        }
+
+        public static double jedenKontraReszta(List<Obiekt> lista, int k)
+        {
+            int poprawne = 0;
+            for (int i = 0; i<lista.Count; i++)
+            {
+                if (knn(lista, lista[i], k) == lista[i].klasa)
+                {
+                    poprawne++;
+                }
+            }
+            return Convert.ToDouble(poprawne) / Convert.ToDouble(lista.Count);
         }
 
         public static string toText(List<Obiekt> list)
@@ -147,18 +175,25 @@ namespace zadanie3
         {
             InitializeComponent();
         }
-
-        private void Debug_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
+        
         private void Uruchom_Click(object sender, RoutedEventArgs e)
         {
             List<Obiekt> allData = new List<Obiekt>();
             allData = importData("iris.txt");
             allData = normalizacja(allData);
             Debug.Text = toText(allData);
+            Sprawdzenie.Text = "poprawne: " + jedenKontraReszta(allData, 3);
+            
+        }
+
+        private void Debug_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void Sprawdzenie_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 }
