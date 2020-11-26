@@ -100,28 +100,154 @@ namespace zadanie3
             }
             return Math.Sqrt(suma);
         }
+        
+        public static double manhattan(Obiekt obiekt1, Obiekt obiekt2)
+        {
+            double suma = 0;
+            for (int i = 0; i < obiekt1.parametry.Count; i++)
+            {
+                suma += Math.Abs(obiekt1.parametry[i] - obiekt2.parametry[i]);
+            }
+            return suma;
+        }
 
-        public static int knn(List<Obiekt> lista, Obiekt obiekt, int k)
+        public static double czebyszew(Obiekt obiekt1, Obiekt obiekt2)
+        {
+            double suma = 0;
+            for (int i = 0; i < obiekt1.parametry.Count; i++)
+            {
+                if (suma < Math.Abs(obiekt1.parametry[i] - obiekt2.parametry[i]))
+                {
+                    suma = Math.Abs(obiekt1.parametry[i] - obiekt2.parametry[i]);
+                }
+            }
+            return suma;
+        }
+
+        public static double minkowski(Obiekt obiekt1, Obiekt obiekt2, double p)
+        {
+            double suma = 0;
+            for (int i = 0; i < obiekt1.parametry.Count; i++)
+            {
+                suma += Math.Pow(Math.Abs(obiekt1.parametry[i] - obiekt2.parametry[i]), p);
+            }
+            return Math.Pow(suma, 1/p);
+        }
+
+        public static double logarytm(Obiekt obiekt1, Obiekt obiekt2)
+        {
+            double suma = 0;
+            for (int i = 0; i < obiekt1.parametry.Count; i++)
+            {
+                suma += Math.Abs(Math.Log(obiekt1.parametry[i]) - Math.Log(obiekt2.parametry[i]));
+            }
+            return suma;
+        }
+
+        public static int knn(List<Obiekt> lista, Obiekt obiekt, int k, int metryka, double p = 2)
         {
             List<Obiekt> posortowane = new List<Obiekt>();
             posortowane.Add(lista[0]);
-            for (int i =1; i<lista.Count; i++)
+
+            switch (metryka)
             {
-                bool flag = false;
-                for (int j = 0; j<posortowane.Count; j++)
-                {
-                    if (euklides(obiekt, lista[i]) < euklides(obiekt, posortowane[j]))
+                case 1:
+                    for (int i = 1; i < lista.Count; i++)
                     {
-                        posortowane.Insert(j, lista[i]);
-                        flag = true;
-                        break;
+                        bool flag = false;
+                        for (int j = 0; j < posortowane.Count; j++)
+                        {
+                            if (euklides(obiekt, lista[i]) < euklides(obiekt, posortowane[j]))
+                            {
+                                posortowane.Insert(j, lista[i]);
+                                flag = true;
+                                break;
+                            }
+                        }
+                        if (flag == false)
+                        {
+                            posortowane.Add(lista[i]);
+                        }
                     }
-                }
-                if (flag == false)
-                { 
-                    posortowane.Add(lista[i]);
-                }
+                    break;
+                case 2:
+                    for (int i = 1; i < lista.Count; i++)
+                    {
+                        bool flag = false;
+                        for (int j = 0; j < posortowane.Count; j++)
+                        {
+                            if (manhattan(obiekt, lista[i]) < manhattan(obiekt, posortowane[j]))
+                            {
+                                posortowane.Insert(j, lista[i]);
+                                flag = true;
+                                break;
+                            }
+                        }
+                        if (flag == false)
+                        {
+                            posortowane.Add(lista[i]);
+                        }
+                    }
+                    break;
+                case 3:
+                    for (int i = 1; i < lista.Count; i++)
+                    {
+                        bool flag = false;
+                        for (int j = 0; j < posortowane.Count; j++)
+                        {
+                            if (czebyszew(obiekt, lista[i]) < czebyszew(obiekt, posortowane[j]))
+                            {
+                                posortowane.Insert(j, lista[i]);
+                                flag = true;
+                                break;
+                            }
+                        }
+                        if (flag == false)
+                        {
+                            posortowane.Add(lista[i]);
+                        }
+                    }
+                    break;
+                case 4:
+                    for (int i = 1; i < lista.Count; i++)
+                    {
+                        bool flag = false;
+                        for (int j = 0; j < posortowane.Count; j++)
+                        {
+                            if (minkowski(obiekt, lista[i],p) < minkowski(obiekt, posortowane[j],p))
+                            {
+                                posortowane.Insert(j, lista[i]);
+                                flag = true;
+                                break;
+                            }
+                        }
+                        if (flag == false)
+                        {
+                            posortowane.Add(lista[i]);
+                        }
+                    }
+                    break;
+                case 5:
+                    for (int i = 1; i < lista.Count; i++)
+                    {
+                        bool flag = false;
+                        for (int j = 0; j < posortowane.Count; j++)
+                        {
+                            if (euklides(obiekt, lista[i]) < euklides(obiekt, posortowane[j]))
+                            {
+                                posortowane.Insert(j, lista[i]);
+                                flag = true;
+                                break;
+                            }
+                        }
+                        if (flag == false)
+                        {
+                            posortowane.Add(lista[i]);
+                        }
+                    }
+                    break;
             }
+
             Dictionary<int, int> klasyDec = new Dictionary<int, int>();
             for (int i = 0; i < k; i++)
             {
@@ -140,12 +266,12 @@ namespace zadanie3
 
         }
 
-        public static double jedenKontraReszta(List<Obiekt> lista, int k)
+        public static double jedenKontraReszta(List<Obiekt> lista, int k, int metryka, double p = 2)
         {
             int poprawne = 0;
             for (int i = 0; i<lista.Count; i++)
             {
-                if (knn(lista, lista[i], k) == lista[i].klasa)
+                if (knn(lista, lista[i], k, metryka, p) == lista[i].klasa)
                 {
                     poprawne++;
                 }
@@ -171,6 +297,41 @@ namespace zadanie3
             return text;
         }
 
+        public void sprawdz(List<Obiekt> lista, int k = 3, double p = 2)
+        {
+            string text = "";
+            text += "euklides: " + jedenKontraReszta(lista, k, 1, p).ToString("0.####") + "\n";
+            text += "manhattan: " + jedenKontraReszta(lista, k, 2, p).ToString("0.####") + "\n";
+            text += "czebyszew: " + jedenKontraReszta(lista, k, 3, p).ToString("0.####") + "\n";
+            text += "minkowski: " + jedenKontraReszta(lista, k, 4, p).ToString("0.####") + "\n";
+            text += "logarytm: " + jedenKontraReszta(lista, k, 5, p).ToString("0.####") + "\n";
+            Sprawdzenie.Text = text;
+        }
+
+        public int sprawdzK(List<Obiekt> lista, int k)
+        {
+            Dictionary<int, int> klasyDec = new Dictionary<int, int>();
+            for (int i = 0; i < lista.Count; i++)
+            {
+                if (klasyDec.ContainsKey(lista[i].klasa))
+                {
+                    klasyDec[lista[i].klasa]++;
+                }
+                else
+                {
+                    klasyDec.Add(lista[i].klasa, 1);
+                }
+            }
+            if(k>klasyDec.Min(m => m.Value))
+            {
+                return klasyDec.Min(m => m.Value);
+            }
+            else
+            {
+                return k;
+            }
+        }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -178,11 +339,27 @@ namespace zadanie3
         
         private void Uruchom_Click(object sender, RoutedEventArgs e)
         {
+            var ofd = new Microsoft.Win32.OpenFileDialog() { Filter = "TXT Files (*.txt)|*.txt" }; //okno wyboru pliku ze stackoverflow
+            var result = ofd.ShowDialog();
+            if (result == false) return;
+            FileText.Text = ofd.FileName;
+
             List<Obiekt> allData = new List<Obiekt>();
-            allData = importData("iris.txt");
+            allData = importData(ofd.FileName);
+
             allData = normalizacja(allData);
             Debug.Text = toText(allData);
-            Sprawdzenie.Text = "poprawne: " + jedenKontraReszta(allData, 3);
+            int k;
+            if( !int.TryParse(InputK.Text, out k))
+            {
+                k = 3;
+            }
+            double p;
+            if (!double.TryParse(InputK.Text, out p))
+            {
+                p = 2;
+            }
+            sprawdz(allData, sprawdzK(allData,k), p);
             
         }
 
@@ -192,6 +369,21 @@ namespace zadanie3
         }
 
         private void Sprawdzenie_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void InputP_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void InputK_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void FileText_TextChanged(object sender, TextChangedEventArgs e)
         {
 
         }

@@ -8,8 +8,11 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <TextBox x:Name="Debug" HorizontalAlignment="Left" Height="178" Margin="159,114,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="160" TextChanged="Debug_TextChanged"/>
-        <Button x:Name="Uruchom" Content="Button" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="518,114,0,0" Click="Uruchom_Click"/>
+        <Button x:Name="Uruchom" Content="Wczytaj i sprawdź" HorizontalAlignment="Left" VerticalAlignment="Top" Width="161" Margin="518,82,0,0" Click="Uruchom_Click"/>
         <TextBox x:Name="Sprawdzenie" HorizontalAlignment="Left" Height="178" Margin="324,114,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="189" TextChanged="Sprawdzenie_TextChanged"/>
+        <TextBox x:Name="InputK" HorizontalAlignment="Left" Height="19" Margin="159,57,0,0" TextWrapping="Wrap" Text="podaj k" VerticalAlignment="Top" Width="66" TextChanged="InputK_TextChanged"/>
+        <TextBox x:Name="InputP" HorizontalAlignment="Left" Height="19" Margin="230,57,0,0" TextWrapping="Wrap" Text="podaj p&gt;0" VerticalAlignment="Top" Width="66" TextChanged="InputP_TextChanged"/>
+        <TextBox x:Name="FileText" HorizontalAlignment="Left" Height="16" Margin="159,81,0,0" TextWrapping="Wrap" Text="Plik" VerticalAlignment="Top" Width="354" TextChanged="FileText_TextChanged"/>
 
     </Grid>
 </Window>
